@@ -12,50 +12,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.habitos.habitos.Entitities.Habito;
-import com.habitos.habitos.Repositories.HabitoRepository;
+import com.habitos.habitos.Model.Habito;
+import com.habitos.habitos.Services.HabitoService;
+
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/habitos")
 public class HabitosController {
 
     @Autowired
-    private HabitoRepository habitoRepository; 
+    private HabitoService habitoService;
 
     @GetMapping
-    public List<Habito> getAllHabitos(){
-        return habitoRepository.findAll();
+    public List<Habito> getAllHabitos() {
+        return habitoService.getAllHabitos();
     }
 
     @GetMapping("/{id}")
-    public Habito getHabitoById(@PathVariable Long id){
-        return habitoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("No se encontro el hábito correspondiente"));
+    public Habito getHabitoById(@PathVariable Long id) {
+        return habitoService.getHabitoById(id);
     }
 
     @PostMapping
-    public Habito createHabito(@RequestBody Habito habito){
-        return habitoRepository.save(habito);
+    public Habito createHabito(@RequestBody Habito habito) {
+        return habitoService.createHabito(habito);
     }
 
-    @PutMapping
-    public Habito updateHabito(@PathVariable Long id, @RequestBody Habito habito){
-        Habito foundHabito = getHabitoById(id);
-
-        foundHabito.setTitle(habito.getTitle());
-        foundHabito.setDescription(habito.getDescription());
-        foundHabito.setIsCompleted(habito.getIsCompleted());
-
-        return habitoRepository.save(foundHabito);
-
+    @PutMapping("/{id}")
+    public Habito updateHabito(@PathVariable Long id, @RequestBody Habito habito) {
+        return habitoService.updateHabito(id, habito);
     }
 
-    @DeleteMapping
-    public Habito deleteHabito(@PathVariable Long id){
-        Habito foundHabito = getHabitoById(id);
-
-       habitoRepository.delete(foundHabito);
-       return foundHabito;
+    @DeleteMapping("/{id}")
+    public Habito deleteHabito(@PathVariable Long id) {
+        return habitoService.deleteHabito(id);
     }
-
 }
